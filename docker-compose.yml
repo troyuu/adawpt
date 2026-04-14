@@ -2,15 +2,15 @@ services:
   db:
     image: postgres:18
     environment:
-      POSTGRES_DB: adawpt
-      POSTGRES_USER: adawpt
-      POSTGRES_PASSWORD: adawpt_dev
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U adawpt"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -34,11 +34,11 @@ services:
       - "8000:8000"
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.dev
-      DATABASE_URL: postgres://adawpt:adawpt_dev@db:5432/adawpt
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
-      SECRET_KEY: dev-secret-key-change-in-production
+      SECRET_KEY: ${SECRET_KEY}
       DEBUG: "True"
       ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0
     depends_on:
@@ -54,11 +54,11 @@ services:
       - ./backend:/app
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.dev
-      DATABASE_URL: postgres://adawpt:adawpt_dev@db:5432/adawpt
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
-      SECRET_KEY: dev-secret-key-change-in-production
+      SECRET_KEY: ${SECRET_KEY}
     depends_on:
       db:
         condition: service_healthy
@@ -84,9 +84,9 @@ services:
       - "3002:3001"
     environment:
       PORT: 3001
-      DATABASE_URL: postgres://adawpt:adawpt_dev@db:5432/adawpt
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379/0
-      JWT_SECRET: dev-secret-key-change-in-production
+      JWT_SECRET: ${SECRET_KEY}
       CORS_ORIGIN: http://localhost:5173
     depends_on:
       db:
