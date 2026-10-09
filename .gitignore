@@ -61,3 +61,6 @@ coverage/
 # OS
 Thumbs.db
 .Trash-*
+
+# Keep local environment backups and credential files out of Git.
+.env.pre-*
